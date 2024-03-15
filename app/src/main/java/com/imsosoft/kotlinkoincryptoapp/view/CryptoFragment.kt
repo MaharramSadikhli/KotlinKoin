@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.imsosoft.kotlinkoincryptoapp.R
 import com.imsosoft.kotlinkoincryptoapp.adapter.Adapter
 import com.imsosoft.kotlinkoincryptoapp.adapter.IAdapter
 import com.imsosoft.kotlinkoincryptoapp.databinding.FragmentCryptoBinding
 import com.imsosoft.kotlinkoincryptoapp.model.Crypto
+import com.imsosoft.kotlinkoincryptoapp.viewmodel.CryptoViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class CryptoFragment : Fragment(), IAdapter {
@@ -20,6 +23,7 @@ class CryptoFragment : Fragment(), IAdapter {
     private val binding get() = _binding!!
 
     private lateinit var adapter: Adapter
+    private val viewModel by viewModel<CryptoViewModel>() // dependency injection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,43 @@ class CryptoFragment : Fragment(), IAdapter {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
 
+        viewModel.getCryptoList()
+
+        observeCryptoList()
+    }
+
+
+    private fun observeCryptoList() {
+
+        viewModel.cryptoList.observe(viewLifecycleOwner, Observer { cryptos ->
+            cryptos?.let {
+                binding.recyclerView.visibility = View.VISIBLE
+                adapter = Adapter(ArrayList(cryptos.data ?: arrayListOf()), this@CryptoFragment)
+                binding.recyclerView.adapter = adapter
+            }
+        })
+
+        viewModel.isError.observe(viewLifecycleOwner, Observer { error->
+            error?.let {
+                if(it.data == true) {
+                    binding.cryptoErrorText.visibility = View.VISIBLE
+                } else {
+                    binding.cryptoErrorText.visibility = View.GONE
+                }
+            }
+        })
+
+        viewModel.isLoading.observe(viewLifecycleOwner, Observer { loading->
+            loading?.let {
+                if (it.data == true) {
+                    binding.cryptoProgressBar.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.cryptoErrorText.visibility = View.GONE
+                } else {
+                    binding.cryptoProgressBar.visibility = View.GONE
+                }
+            }
+        })
 
     }
 
