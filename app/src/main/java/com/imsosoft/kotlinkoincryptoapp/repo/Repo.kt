@@ -1,11 +1,11 @@
 package com.imsosoft.kotlinkoincryptoapp.repo
 
-import com.imsosoft.kotlinkoincryptoapp.model.CryptoList
+import com.imsosoft.kotlinkoincryptoapp.model.Crypto
 import com.imsosoft.kotlinkoincryptoapp.service.ICryptoAPI
 import com.imsosoft.kotlinkoincryptoapp.util.Resource
 
 class Repo(private val api: ICryptoAPI): IRepo {
-    override suspend fun downloadData(): Resource<CryptoList> {
+    override suspend fun downloadData(): Resource<List<Crypto>> {
         return try {
             val response = api.getData()
 

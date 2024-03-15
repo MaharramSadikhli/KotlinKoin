@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.imsosoft.kotlinkoincryptoapp.databinding.RecyclerRowBinding
+import com.imsosoft.kotlinkoincryptoapp.model.Crypto
 import com.imsosoft.kotlinkoincryptoapp.model.CryptoArrayList
 import com.imsosoft.kotlinkoincryptoapp.util.Constants
 
 class Adapter(
-    private val cryptoList: CryptoArrayList,
+    private val cryptoList: ArrayList<Crypto>,
     private val listener: IAdapter
 ) : RecyclerView.Adapter<Adapter.AdapterViewHolder>() {
 

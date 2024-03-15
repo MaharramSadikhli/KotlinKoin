@@ -2,7 +2,7 @@ package com.imsosoft.kotlinkoincryptoapp.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.imsosoft.kotlinkoincryptoapp.model.CryptoList
+import com.imsosoft.kotlinkoincryptoapp.model.Crypto
 import com.imsosoft.kotlinkoincryptoapp.repo.IRepo
 import com.imsosoft.kotlinkoincryptoapp.util.Resource
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 class CryptoViewModel(private val repo: IRepo): ViewModel() {
 
     private lateinit var job: Job
-    val cryptoList = MutableLiveData<Resource<CryptoList>>()
+    val cryptoList = MutableLiveData<Resource<List<Crypto>>>()
     val isError = MutableLiveData<Resource<Boolean>>()
     val isLoading = MutableLiveData<Resource<Boolean>>()
 
