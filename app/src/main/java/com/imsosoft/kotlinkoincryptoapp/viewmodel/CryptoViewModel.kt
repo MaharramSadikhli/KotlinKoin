@@ -1,5 +1,6 @@
 package com.imsosoft.kotlinkoincryptoapp.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.imsosoft.kotlinkoincryptoapp.model.Crypto
@@ -15,28 +16,34 @@ import kotlinx.coroutines.withContext
 class CryptoViewModel(private val repo: IRepo): ViewModel() {
 
     private lateinit var job: Job
-    val cryptoList = MutableLiveData<Resource<List<Crypto>>>()
-    val isError = MutableLiveData<Resource<Boolean>>()
-    val isLoading = MutableLiveData<Resource<Boolean>>()
+
+    private val _cryptoList = MutableLiveData<Resource<List<Crypto>>>()
+    val cryptoList: LiveData<Resource<List<Crypto>>> = _cryptoList
+
+    private val _isError = MutableLiveData<Resource<Boolean>>()
+    val isError: LiveData<Resource<Boolean>> = _isError
+
+    private val _isLoading = MutableLiveData<Resource<Boolean>>()
+    val isLoading: LiveData<Resource<Boolean>> = _isLoading
 
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         println("Error -> ${throwable.localizedMessage}")
-        isError.value = Resource.error(throwable.localizedMessage ?: "error!", data = true)
+        _isError.value = Resource.error(throwable.localizedMessage ?: "error!", data = true)
     }
 
 
     fun getCryptoList() {
-        isLoading.value = Resource.loading(data = true)
+        _isLoading.value = Resource.loading(data = true)
 
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             val response = repo.downloadData()
 
             withContext(Dispatchers.Main) {
                 response.data?.let {
-                    cryptoList.value = response
-                    isLoading.value = Resource.loading(data = false)
-                    isError.value = Resource.error("", data = false)
+                    _cryptoList.value = response
+                    _isLoading.value = Resource.loading(data = false)
+                    _isError.value = Resource.error("", data = false)
                 }
             }
         }
